@@ -16,7 +16,6 @@ namespace ShopNet.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
-        private readonly ICartService _cartService;
         private readonly IUnitOfWork _unitOfWork;
 
         private readonly ILogger<ProductController> _logger;
@@ -24,12 +23,10 @@ namespace ShopNet.Controllers
         public ProductController(
             ILogger<ProductController> logger,
             IProductService productService,
-            ICartService cartService,
             IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _productService = productService;
-            _cartService = cartService;
             _unitOfWork = unitOfWork;
         }
 
@@ -64,22 +61,26 @@ namespace ShopNet.Controllers
             return View(product);
         }
 
-        // POST : /Products/AddToCart
-        [ValidateAntiForgeryToken]
-        public IActionResult AddToCart(int productId, string productName, string imageUrl, decimal price, int qty)
-        {
-            _cartService.AddToCart(new Models.CartItem
-            {
-                ProductId = productId,
-                ProductName = productName,
-                ImageUrl = imageUrl,
-                Price = price,
-                Quantity = qty
-            });
+        /* 
+            MOVED AddToCart in Cart Controller 
+        */
 
-            TempData["Success"] = $"'{productName}' added to cart!";
-            return RedirectToAction("Details", new { id = productId });
-        }
+        // POST : /Products/AddToCart
+        // [ValidateAntiForgeryToken]
+        // public IActionResult AddToCart(int productId, string productName, string imageUrl, decimal price, int qty)
+        // {
+        //     _cartService.AddToCart(new Models.CartItem
+        //     {
+        //         ProductId = productId,
+        //         ProductName = productName,
+        //         ImageUrl = imageUrl,
+        //         Price = price,
+        //         Quantity = qty
+        //     });
+
+        //     TempData["Success"] = $"'{productName}' added to cart!";
+        //     return RedirectToAction("Details", new { id = productId });
+        // }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

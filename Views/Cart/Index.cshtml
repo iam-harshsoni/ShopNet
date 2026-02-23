@@ -1,0 +1,105 @@
+@model List<ShopNet.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Your Cart";
+    var total = (decimal)(ViewData["CartTotal"] ?? 0m);
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">🛒 Your Cart</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <h4 class="text-muted">Your cart is empty</h4>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-primary mt-3">
+                Continue Shopping
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Cart Items -->
+            <div class="col-md-8">
+                @foreach (var item in Model)
+                {
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-2">
+                                    <img src="@item.ImageUrl" class="img-fluid rounded"
+                                         style="height:60px; object-fit:cover;" />
+                                </div>
+                                <div class="col-4">
+                                    <h6 class="mb-0">@item.ProductName</h6>
+                                    <small class="text-muted">₹@item.Price.ToString("N0") each</small>
+                                </div>
+                                <div class="col-3">
+                                    <form asp-action="UpdateQuantity" method="post" class="d-flex align-items-center gap-2">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <input type="number" name="quantity" value="@item.Quantity" min="1" max="100"
+                                               class="form-control form-control-sm" style="width:70px;"
+                                               onchange="this.form.submit()" />
+                                    </form>
+                                </div>
+                                <div class="col-2 fw-bold text-primary">
+                                    ₹@item.Total.ToString("N0")
+                                </div>
+                                <div class="col-1">
+                                    <form asp-action="Remove" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Remove item?')">
+                                            ✕
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Clear Cart -->
+                <form asp-action="Clear" method="post" class="mt-2">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('Clear entire cart?')">
+                        🗑️ Clear Cart
+                    </button>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Summary</h5>
+                        <hr />
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span>₹@total.ToString("N0")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping</span>
+                            <span class="text-success">FREE</span>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total</span>
+                            <span class="text-primary">₹@total.ToString("N0")</span>
+                        </div>
+                        <button class="btn btn-success w-100 mt-3 btn-lg">
+                            Proceed to Checkout →
+                        </button>
+                        <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">
+                            ← Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -86,14 +86,7 @@
                         </button>
                     </form>
 
-                    <a asp-controller="Cart" asp-action="Index"
-                           class="btn btn-outline-warning btn-sm position-relative">
-                        🛒 Cart
-                        <span class="position-absolute top-0 start-100 translate-middle
-                            badge rounded-pill bg-danger" id="cart-count">
-                            0
-                        </span>
-                    </a>
+                    @await Component.InvokeAsync("CartSummary")
 
                     <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Login">
                         Login

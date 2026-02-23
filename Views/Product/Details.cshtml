@@ -39,23 +39,40 @@
                 </span>
             </div>
 
-            <!-- Stock Status -->
             @if (Model.IsInStock)
             {
                 <p class="text-success fw-semibold">
                     ✅ In Stock (@Model.Stock units available)
                 </p>
 
-                <div class="d-flex gap-3 mt-4">
-                    <div class="input-group" style="width: 130px;">
-                        <span class="input-group-text">Qty</span>
-                        <input type="number" class="form-control" value="1" min="1" max="@Model.Stock" />
+                @* 
+                    THE REAL ADD TO CART FORM
+                    - Posts to CartController.AddToCart
+                    - Only sends productId and quantity — price fetched server-side
+                    - AntiForgeryToken protects against CSRF attacks
+                *@
+                <form asp-controller="Cart" asp-action="AddToCart" method="post" class="mt-4">
+
+                    @Html.AntiForgeryToken()
+
+                    @* Only safe data sent from form — no price, no name *@
+                    <input type="hidden" name="productId" value="@Model.Id" />
+
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="input-group" style="width: 140px;">
+                            <span class="input-group-text">Qty</span>
+                            <input type="number" name="quantity" value="1" min="1" max="@Model.Stock"
+                                   class="form-control" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                            🛒 Add to Cart
+                        </button>
                     </div>
-                    <button class="btn btn-primary btn-lg flex-grow-1">
-                        🛒 Add to Cart
-                    </button>
-                </div>
-                <button class="btn btn-outline-danger w-100 mt-2">
+
+                </form>
+
+                <button class="btn btn-outline-danger w-100 mt-1">
                     ♥ Add to Wishlist
                 </button>
             }
@@ -70,7 +87,7 @@
             <hr />
 
             <!-- Back Link -->
-            <a asp-controller="Product" asp-action="Index" class="btn btn-link ps-0">
+            <a asp-controller="Products" asp-action="Index" class="btn btn-link ps-0">
                 ← Back to Products
             </a>
         </div>

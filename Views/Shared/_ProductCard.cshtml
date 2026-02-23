@@ -2,11 +2,16 @@
 
 <div class="card h-100 shadow-sm">
 
-    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Name" style="height: 220px; object-fit: cover;" />
+    <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.Id">
+        <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Name" style="height: 220px; object-fit: cover;" />
+    </a>
 
     <div class="card-body">
         <span class="badge bg-secondary mb-1">@Model.Category?.Name</span>
-        <h5 class="card-title">@Model.Name</h5>
+        <h5 class="card-title">
+            <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.Id"
+               class="text-decoration-none text-dark">@Model.Name</a>
+        </h5>
 
         <p class="card-text text-muted small">
             @(Model.Description.Length > 80 ? Model.Description.Substring(0, 80) + "..." : Model.Description)
@@ -21,7 +26,24 @@
 
             @if (Model.IsInStock)
             {
-                <button class="btn btn-primary btn-sm">🛒 Add</button>
+                @* 
+                    Quick Add to Cart from product card.
+                    Quantity defaults to 1 — user can adjust on detail page.
+                    Price is NOT sent — fetched server-side in CartController.
+                *@
+                <form asp-controller="Cart" asp-action="AddToCart" method="post">
+
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <input type="hidden" name="quantity" value="1" />
+
+                    @* Pass current page URL so user lands back here after adding *@
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        🛒 Add
+                    </button>
+                </form>
             }
             else
             {
