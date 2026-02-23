@@ -39,7 +39,7 @@ namespace ShopNet.Services
             //only search
             if (!string.IsNullOrWhiteSpace(search))
                 return await _unitOfWork.Products.SearchAsync(search);
-                
+
             // only category
             if (categotyId.HasValue)
                 return await _unitOfWork.Products.GetByCategoryAsync(categotyId.Value);
@@ -59,6 +59,7 @@ namespace ShopNet.Services
             product.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.Products.AddAsync(product);
+            Console.WriteLine(product.Id);
             await _unitOfWork.SaveChangesAsync();
 
             _logger.LogInformation("Product created: {ProductName} (ID: {Id})",
