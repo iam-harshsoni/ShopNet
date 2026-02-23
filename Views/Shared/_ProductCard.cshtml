@@ -1,0 +1,33 @@
+@model ShopNet.Models.Product
+
+<div class="card h-100 shadow-sm">
+
+    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Name" style="height: 220px; object-fit: cover;" />
+
+    <div class="card-body">
+        <span class="badge bg-secondary mb-1">@Model.Category?.Name</span>
+        <h5 class="card-title">@Model.Name</h5>
+
+        <p class="card-text text-muted small">
+            @(Model.Description.Length > 80 ? Model.Description.Substring(0, 80) + "..." : Model.Description)
+        </p>
+    </div>
+
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <span class="fw-bold text-primary">₹@Model.Price.ToString("N0")</span>
+        <div class="d-flex gap-2">
+            <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.Id"
+               class="btn btn-outline-secondary btn-sm">View</a>
+
+            @if (Model.IsInStock)
+            {
+                <button class="btn btn-primary btn-sm">🛒 Add</button>
+            }
+            else
+            {
+                <span class="badge bg-danger align-self-center">Out of Stock</span>
+            }
+        </div>
+    </div>
+
+</div>

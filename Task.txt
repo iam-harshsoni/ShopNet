@@ -1,0 +1,6 @@
+Pending Task: 
+
+- Filters are not working properply, fix it. 
+- Categories Filter not showing available categries in dropdown
+- Cart Items is Pending
+- Product Form is Pending

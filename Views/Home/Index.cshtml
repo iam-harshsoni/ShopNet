@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Identity.Data
+@using ShopNet.Controllers
+@model List<Product>
+
+@{
+    ViewData["Title"] = "Welcome to Shop Net";
+}
+
+<!-- Hero Section -->
+<div class="bg-dark text-white py-5 mb-5 rounded">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">Welcome to ShopNest 🏪</h1>
+        <p class="lead">Your one-stop shop for everything you need</p>
+        <a href="#featured" class="btn btn-warning btn-lg mt-3">Shop Now</a>
+    </div>
+</div>
+
+<!-- Featured Products Section -->
+<div id="featured" class="container">
+    <h2 class="mb-4">Featured Products</h2>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+        @foreach (var product in Model)
+        {
+            @* Two ways to show Partial View *@
+
+            @* @await Html.PartialAsync("_ProductCard", product) *@
+            <partial name="_ProductCard" model="product"></partial>
+            }
+
+        </div>
+    </div>
