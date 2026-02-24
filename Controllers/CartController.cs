@@ -86,9 +86,9 @@ namespace ShopNet.Controllers
         // POST: /Cart/UpdateQuantity
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateQuantity(int productId, int qty)
+        public IActionResult UpdateQuantity(int productId, int quantity)
         {
-            _cartService.UpdateQuantity(productId, qty);
+            _cartService.UpdateQuantity(productId, quantity);
             return RedirectToAction(nameof(Index));
         }
 
