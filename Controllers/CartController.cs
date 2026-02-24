@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ShopNet.Models;
@@ -90,6 +91,19 @@ namespace ShopNet.Controllers
         {
             _cartService.UpdateQuantity(productId, quantity);
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Checkout()
+        {
+            var cart = _cartService.GetCart();
+            if (!cart.Any())
+            {
+                TempData["Error"] = "Your cart is empty.";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(cart);
         }
 
         //POST: /Cart/Clear

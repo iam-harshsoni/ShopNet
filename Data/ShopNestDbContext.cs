@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ShopNet.Models;
 
 namespace ShopNet.Data
 {
-    public class ShopNestDbContext : DbContext
+    // Change: DbContext → IdentityDbContext<ApplicationUser>
+    // This adds all 7 Identity tables automatically
+    public class ShopNestDbContext : IdentityDbContext<ApplicationUser>
     {
         // Construtor - receives options (Connection string etc.) via DI
         public ShopNestDbContext(DbContextOptions<ShopNestDbContext> option) : base(option)

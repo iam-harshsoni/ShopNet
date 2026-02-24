@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopNet.Models;
 
@@ -9,19 +10,92 @@ namespace ShopNet.Data.Seed
 {
     public class DbSeeder
     {
-        public static async Task SeedAsync(ShopNestDbContext context, ILogger logger)
+        public static async Task SeedAsync(
+            ShopNestDbContext context,
+            RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager,
+            ILogger logger)
         {
             try
             {
                 // Apply any pending migrations automatically on startup
                 await context.Database.MigrateAsync();
 
-                // Only seed if tables are empty
-                if (await context.Categories.AnyAsync()) return;
+                await SeedRolesAsync(roleManager, logger);
+                await SeedAdminUserAsync(userManager, logger);
+                await SeedCategoriesAndProductsAsync(context, logger);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error seeding database");
+                throw;
+            }
+        }
 
-                logger.LogInformation("Seeding database...");
+        private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager, ILogger logger)
+        {
+            Console.WriteLine(">>> SeedRolesAsync started");
 
-                var categories = new List<Category>
+            string[] roles = ["Admin", "Customer", "StoreManager"];
+
+            foreach (var role in roles)
+            {
+                Console.WriteLine($">>> Checking role: {role}");
+
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                    logger.LogInformation("Roles Create: {Role}", role);
+                }
+            }
+        }
+
+        private static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, ILogger logger)
+        {
+            Console.WriteLine(">>> SeedAdminUserAsync started");
+
+            const string adminEmail = "admin@shopnet.com";
+
+            var existing = await userManager.FindByEmailAsync(adminEmail);
+            if (existing != null)
+            {
+                Console.WriteLine(">>> Admin already exists, skipping");
+                return;
+            }
+
+            var admin = new ApplicationUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                FirstName = "Shop",
+                LastName = "Admin",
+                EmailConfirmed = true,  // Skip email confirmation for seeded admin
+                IsActive = true
+            };
+
+            // Use a strong password — in production, load from environment variable
+            var result = await userManager.CreateAsync(admin, "Admin@12345@");
+
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(admin, "Admin");
+                logger.LogInformation("Admin user seeded: {Email}", adminEmail);
+            }
+            else
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                logger.LogError("Failed to created admin: {Errors}", errors);
+            }
+        }
+
+        private static async Task SeedCategoriesAndProductsAsync(ShopNestDbContext context, ILogger logger)
+        {
+            // Only seed if tables are empty
+            if (await context.Categories.AnyAsync()) return;
+
+            logger.LogInformation("Seeding database...");
+
+            var categories = new List<Category>
                 {
                     new() { Name = "Electronics",  Slug = "electronics",  Description = "Gadgets and devices" },
                     new() { Name = "Footwear",     Slug = "footwear",     Description = "Shoes and sandals" },
@@ -30,10 +104,10 @@ namespace ShopNet.Data.Seed
                     new() { Name = "Accessories",  Slug = "accessories",  Description = "Fashion accessories" },
                 };
 
-                await context.Categories.AddRangeAsync(categories);
-                await context.SaveChangesAsync();
+            await context.Categories.AddRangeAsync(categories);
+            await context.SaveChangesAsync();
 
-                var products = new List<Product>
+            var products = new List<Product>
                 {
                     new Product
                     {
@@ -97,17 +171,10 @@ namespace ShopNet.Data.Seed
                     }
                 };
 
-                await context.Products.AddRangeAsync(products);
-                await context.SaveChangesAsync();
+            await context.Products.AddRangeAsync(products);
+            await context.SaveChangesAsync();
 
-                logger.LogInformation("Database seeded successfully.");
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error seeding database");
-                throw;
-            }
+            logger.LogInformation("Database seeded successfully.");
         }
     }
 }

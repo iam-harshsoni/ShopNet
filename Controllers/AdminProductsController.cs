@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,8 @@ using ShopNet.Services.Interfaces;
 
 namespace ShopNet.Controllers
 {
-    // We'll add [Authorize(Roles = "Admin")] here when we cover Auth
+    // [Authorize(Roles = "Admin,StoreManager")] 
+    [Authorize(Policy = "AdminOrStoreManager")]  //Using Policy instead of Role string (preferred in production):
     public class AdminProductsController : Controller
     {
         private readonly IProductService _productService;
@@ -31,6 +33,7 @@ namespace ShopNet.Controllers
         }
 
         // GET: /AdminProducts
+        [Authorize(Roles = "Admin,StoreManager")]
         public async Task<IActionResult> Index()
         {
             var products = await _productService.GetAllProductsAsync();
@@ -38,6 +41,7 @@ namespace ShopNet.Controllers
         }
 
         // Get: /AdminProducts/Create
+        [Authorize(Roles = "Admin,StoreManager")]
         public async Task<IActionResult> Create()
         {
             var vm = new ProductCreateViewModel()
@@ -50,6 +54,7 @@ namespace ShopNet.Controllers
         // Post: /AdminProducts/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,StoreManager")]
         public async Task<IActionResult> Create(ProductCreateViewModel vm)
         {
             // ModelState.IsValid checks ALL Data Annotations on the ViewModel
@@ -71,7 +76,7 @@ namespace ShopNet.Controllers
                 ImageUrl = vm.ImageUrl ?? "https://placehold.co/600x400?text=No+Image",
                 CategoryId = vm.CategoryId
             };
-            
+
             await _productService.CreateProductAsync(product);
 
             TempData["Success"] = $"Product '{product.Name}' create successfully";
@@ -79,6 +84,7 @@ namespace ShopNet.Controllers
         }
 
         // GET: /AdminProducts/Edit/5
+        [Authorize(Roles = "Admin,StoreManager")]
         public async Task<IActionResult> Edit(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
@@ -102,6 +108,7 @@ namespace ShopNet.Controllers
         // POST: /AdminProducts/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,StoreManager")]
         public async Task<IActionResult> Edit(int id, ProductEditViewModel vm)
         {
             if (id != vm.Id) return BadRequest();
@@ -132,6 +139,7 @@ namespace ShopNet.Controllers
         // POST: /AdminProducts/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var success = await _productService.DeleteProductAsync(id);
