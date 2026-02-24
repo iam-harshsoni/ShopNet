@@ -53,17 +53,17 @@ namespace ShopNet.Services
             SaveCart(cart);
         }
 
-        public void UpdateQuantity(int productId, int qty)
+        public void UpdateQuantity(int productId, int quantity)
         {
             var cart = GetCart();
             var item = cart.FirstOrDefault(x => x.ProductId == productId);
 
             if (item == null) return;
 
-            if (qty <= 0)
+            if (quantity <= 0)
                 cart.RemoveAll(x => x.ProductId == productId);
             else
-                item.Quantity = qty;
+                item.Quantity = quantity;
 
             SaveCart(cart);
         }
