@@ -29,22 +29,18 @@ namespace ShopNet.Services
 
         public async Task<IEnumerable<Product>> SearchProductsAsync(string? search, int? categotyId)
         {
-            //Both filters applied
             if (!string.IsNullOrWhiteSpace(search) && categotyId.HasValue)
             {
                 var searchResult = await _unitOfWork.Products.SearchAsync(search);
                 return searchResult.Where(p => p.CategoryId == categotyId);
             }
 
-            //only search
             if (!string.IsNullOrWhiteSpace(search))
                 return await _unitOfWork.Products.SearchAsync(search);
 
-            // only category
             if (categotyId.HasValue)
                 return await _unitOfWork.Products.GetByCategoryAsync(categotyId.Value);
 
-            // No filters — return all
             return await _unitOfWork.Products.GetAllWithCategoryAsync();
         }
 
@@ -53,7 +49,6 @@ namespace ShopNet.Services
 
         public async Task<Product> CreateProductAsync(Product product)
         {
-            //Business rule: normalize name
             product.Name = product.Name.Trim();
             product.CreatedAt = DateTime.UtcNow;
             product.UpdatedAt = DateTime.UtcNow;
@@ -84,8 +79,6 @@ namespace ShopNet.Services
             var product = await _unitOfWork.Products.GetByIdAsync(id);
             if (product == null) return false;
 
-            //Soft delete - dont actually remove from DB
-            // This preserves order history that reference this product
             product.IsActive = false;
             _unitOfWork.Products.Update(product);
             await _unitOfWork.SaveChangesAsync();
@@ -99,7 +92,6 @@ namespace ShopNet.Services
             var product = await _unitOfWork.Products.GetByIdAsync(productId);
             if (product == null) return false;
 
-            // Business rule: Stock cant be go below zero
             if (product.Stock + qty < 0)
             {
                 _logger.LogWarning(

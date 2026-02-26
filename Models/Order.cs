@@ -17,7 +17,7 @@ namespace ShopNet.Models
     }
     public class Order : BaseEntity
     {
-        public string UserId { get; set; } = string.Empty; // Will link to identity user later
+        public string UserId { get; set; } = string.Empty;
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmout { get; set; }
 
@@ -25,8 +25,6 @@ namespace ShopNet.Models
 
         public DateTime OrderedAt { get; set; } = DateTime.UtcNow;
 
-        // Shipping Address - denormalized intentionally
-        // (address at time of order, not current user address)
         [Required]
         public string ShippingName { get; set; } = string.Empty;
 
@@ -39,7 +37,6 @@ namespace ShopNet.Models
         [Required]
         public string ShippingPinCode { get; set; } = string.Empty;
 
-        // Navigation Property
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

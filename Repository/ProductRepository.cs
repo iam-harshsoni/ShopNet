@@ -79,6 +79,5 @@ namespace ShopNet.Repository
                                         objFromDb.ImageUrl = obj.ImageUrl;
                         }
                 }
-
         }
 }

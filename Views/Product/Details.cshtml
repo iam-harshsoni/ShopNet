@@ -44,18 +44,11 @@
                 <p class="text-success fw-semibold">
                     ✅ In Stock (@Model.Stock units available)
                 </p>
-
-                @* 
-                    THE REAL ADD TO CART FORM
-                    - Posts to CartController.AddToCart
-                    - Only sends productId and quantity — price fetched server-side
-                    - AntiForgeryToken protects against CSRF attacks
-                *@
+                
                 <form asp-controller="Cart" asp-action="AddToCart" method="post" class="mt-4">
 
                     @Html.AntiForgeryToken()
 
-                    @* Only safe data sent from form — no price, no name *@
                     <input type="hidden" name="productId" value="@Model.Id" />
 
                     <div class="d-flex align-items-center gap-3 mb-3">

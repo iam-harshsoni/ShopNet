@@ -14,8 +14,7 @@ using ShopNet.Services.Interfaces;
 
 namespace ShopNet.Controllers
 {
-    // [Authorize(Roles = "Admin,StoreManager")] 
-    [Authorize(Policy = "AdminOrStoreManager")]  //Using Policy instead of Role string (preferred in production):
+    [Authorize(Policy = "AdminOrStoreManager")] 
     public class AdminProductsController : Controller
     {
         private readonly IProductService _productService;
@@ -32,7 +31,6 @@ namespace ShopNet.Controllers
             _logger = logger;
         }
 
-        // GET: /AdminProducts
         [Authorize(Roles = "Admin,StoreManager")]
         public async Task<IActionResult> Index()
         {
@@ -40,7 +38,6 @@ namespace ShopNet.Controllers
             return View(products);
         }
 
-        // Get: /AdminProducts/Create
         [Authorize(Roles = "Admin,StoreManager")]
         public async Task<IActionResult> Create()
         {
@@ -51,22 +48,17 @@ namespace ShopNet.Controllers
             return View(vm);
         }
 
-        // Post: /AdminProducts/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,StoreManager")]
         public async Task<IActionResult> Create(ProductCreateViewModel vm)
         {
-            // ModelState.IsValid checks ALL Data Annotations on the ViewModel
             if (!ModelState.IsValid)
             {
-                // Repopulate categories — they're not submitted with the form
                 vm.Categories = (await _unitOfWork.Categories.GetAllAsync()).ToList();
-                return View(vm); // Return form with validation errors shown
+                return View(vm);
             }
 
-            // Map ViewModel → Domain Model
-            // Never trust the whole model from user input
             var product = new Product()
             {
                 Name = vm.Name,
@@ -83,7 +75,6 @@ namespace ShopNet.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /AdminProducts/Edit/5
         [Authorize(Roles = "Admin,StoreManager")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -105,7 +96,6 @@ namespace ShopNet.Controllers
             return View(vm);
         }
 
-        // POST: /AdminProducts/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,StoreManager")]
@@ -122,7 +112,6 @@ namespace ShopNet.Controllers
             var product = await _productService.GetProductByIdAsync(id);
             if (product == null) return NotFound();
 
-            // Only update the fields we want to allow changing
             product.Name = vm.Name;
             product.Description = vm.Description;
             product.Price = vm.Price;
@@ -136,7 +125,6 @@ namespace ShopNet.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: /AdminProducts/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]

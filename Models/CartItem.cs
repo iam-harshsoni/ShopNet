@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 
 namespace ShopNet.Models
 {
-    // Not stored in DB — lives in Session
-    // We'll use this in the Cart ViewComponent
     public class CartItem : BaseEntity
     {
         public int ProductId { get; set; }

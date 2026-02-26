@@ -13,13 +13,11 @@
             <form asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
 
-                <!-- asp-validation-summary shows ALL errors at the top -->
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                 <div class="mb-3">
                     <label asp-for="Name" class="form-label"></label>
                     <input asp-for="Name" class="form-control" placeholder="e.g. Wireless Headphones" />
-                    <!-- asp-validation-for shows field-specific error message -->
                     <span asp-validation-for="Name" class="text-danger small"></span>
                 </div>
 

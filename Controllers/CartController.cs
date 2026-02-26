@@ -26,7 +26,6 @@ namespace ShopNet.Controllers
             _logger = logger;
         }
 
-        // Get: Cart
         public IActionResult Index()
         {
             var cart = _cartService.GetCart();
@@ -34,7 +33,6 @@ namespace ShopNet.Controllers
             return View(cart);
         }
 
-        // POST :/Cart/AddToCart
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(int productId, int qty, string? returnUrl = null)
@@ -75,7 +73,6 @@ namespace ShopNet.Controllers
             return RedirectToAction("Details", "Product", new { id = productId });
         }
 
-        // POST: /Cart/Remove
         [HttpPost]
         public IActionResult Remove(int productId)
         {
@@ -84,7 +81,6 @@ namespace ShopNet.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: /Cart/UpdateQuantity
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateQuantity(int productId, int quantity)
@@ -106,7 +102,6 @@ namespace ShopNet.Controllers
             return View(cart);
         }
 
-        //POST: /Cart/Clear
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Clear()

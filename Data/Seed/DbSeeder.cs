@@ -18,7 +18,6 @@ namespace ShopNet.Data.Seed
         {
             try
             {
-                // Apply any pending migrations automatically on startup
                 await context.Database.MigrateAsync();
 
                 await SeedRolesAsync(roleManager, logger);
@@ -69,11 +68,10 @@ namespace ShopNet.Data.Seed
                 Email = adminEmail,
                 FirstName = "Shop",
                 LastName = "Admin",
-                EmailConfirmed = true,  // Skip email confirmation for seeded admin
+                EmailConfirmed = true, 
                 IsActive = true
             };
 
-            // Use a strong password — in production, load from environment variable
             var result = await userManager.CreateAsync(admin, "Admin@12345@");
 
             if (result.Succeeded)
@@ -90,7 +88,6 @@ namespace ShopNet.Data.Seed
 
         private static async Task SeedCategoriesAndProductsAsync(ShopNestDbContext context, ILogger logger)
         {
-            // Only seed if tables are empty
             if (await context.Categories.AnyAsync()) return;
 
             logger.LogInformation("Seeding database...");

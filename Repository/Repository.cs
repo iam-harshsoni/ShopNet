@@ -17,7 +17,7 @@ namespace ShopNet.Repository
         public Repository(ShopNestDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<T>(); // Gets the DbSet<T> for this entity type
+            _dbSet = context.Set<T>();
         }
 
         public async Task<T?> GetByIdAsync(int id)

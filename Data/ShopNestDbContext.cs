@@ -8,17 +8,12 @@ using ShopNet.Models;
 
 namespace ShopNet.Data
 {
-    // Change: DbContext → IdentityDbContext<ApplicationUser>
-    // This adds all 7 Identity tables automatically
     public class ShopNestDbContext : IdentityDbContext<ApplicationUser>
     {
-        // Construtor - receives options (Connection string etc.) via DI
         public ShopNestDbContext(DbContextOptions<ShopNestDbContext> option) : base(option)
         {
         }
 
-        // DBSet - one property per table
-        // EF Core will create table names after these
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Order { get; set; }
@@ -28,7 +23,6 @@ namespace ShopNet.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            //Table Configuration
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.HasKey(c => c.Id);
@@ -36,7 +30,7 @@ namespace ShopNet.Data
                 entity.Property(c => c.Name).IsRequired().HasMaxLength(100);
                 entity.Property(c => c.Slug).IsRequired().HasMaxLength(100);
 
-                entity.HasIndex(c => c.Slug).IsUnique(); //Slug must be unique
+                entity.HasIndex(c => c.Slug).IsUnique(); 
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -46,18 +40,15 @@ namespace ShopNet.Data
                 entity.Property(p => p.Price).HasColumnType("decimal(18,2)").IsRequired();
                 entity.Property(p => p.Description).HasMaxLength(2000);
 
-                entity.HasIndex(p => p.CategoryId);     // Index on CategoryId for faster JOIN queries
-                entity.HasIndex(p => p.Name);           // Index on Name for faster search
+                entity.HasIndex(p => p.CategoryId);    
+                entity.HasIndex(p => p.Name);          
 
-                //Define Relationship: Product belong to one Category
-                //One Category has many Product
                 entity.HasOne(p => p.Category)
                     .WithMany(c => c.Products)
                     .HasForeignKey(p => p.CategoryId)
-                    .OnDelete(DeleteBehavior.Restrict); // Dont delete category if product exits.
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Order → OrderItems relationship
             modelBuilder.Entity<OrderItem>(entity =>
             {
                 entity.HasOne(oi => oi.Order)
@@ -71,7 +62,6 @@ namespace ShopNet.Data
             });
         }
 
-        // Auto-update UpdatedAt on every save
         public override Task<int> SaveChangesAsync(CancellationToken ct = default)
         {
             var entries = ChangeTracker.Entries()
@@ -89,12 +79,9 @@ namespace ShopNet.Data
                 else if (entry.State == EntityState.Modified)
                 {
                     entity.UpdatedAt = DateTime.UtcNow;
-
-                    // Prevent accidental modification of CreatedAt
                     entry.Property(nameof(BaseEntity.CreatedAt)).IsModified = false;
                 }
             }
-
             return base.SaveChangesAsync(ct);
         }
     }

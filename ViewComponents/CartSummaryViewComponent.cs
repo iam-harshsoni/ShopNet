@@ -8,10 +8,6 @@ using ShopNet.Services.Interfaces;
 
 namespace ShopNet.ViewComponents
 {
-    /// <summary>
-    /// Self-contained component that fetches cart data independently.
-    /// Used in _Layout.cshtml navbar — no parent controller involvement.
-    /// </summary>
     public class CartSummaryViewComponent : ViewComponent
     {
         private readonly ICartService _cartService;
@@ -21,14 +17,11 @@ namespace ShopNet.ViewComponents
             _cartService = cartService;
         }
 
-        // InvokeAsync is the entry point — like an Action method in a Controller
         public IViewComponentResult Invoke()
         {
             var count = _cartService.GetCartCount();
             var total = _cartService.GetCartTotal();
 
-            // ViewComponent looks for its view at:
-            // Views/Shared/Components/CartSummary/Default.cshtml
             return View(new CartSummaryViewModel
             {
                 ItemCount = count,
@@ -38,7 +31,6 @@ namespace ShopNet.ViewComponents
 
     }
 
-    // Small ViewModel just for this component
     public class CartSummaryViewModel
     {
         public int ItemCount { get; set; }

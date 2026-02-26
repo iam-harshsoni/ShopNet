@@ -13,7 +13,6 @@
             <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
                 @Html.AntiForgeryToken()
 
-                <!-- Hidden field — carries the Id through the form submission -->
                 <input asp-for="Id" type="hidden" />
 
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>

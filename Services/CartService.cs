@@ -39,9 +39,9 @@ namespace ShopNet.Services
             var existing = cart.FirstOrDefault(c => c.ProductId == item.ProductId);
 
             if (existing != null)
-                existing.Quantity += item.Quantity; // Already in cart -> increase qty.
+                existing.Quantity += item.Quantity;
             else
-                cart.Add(item);                     // New item -> Add to cart.
+                cart.Add(item);
 
             SaveCart(cart);
         }

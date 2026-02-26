@@ -16,9 +16,8 @@ namespace ShopNet.Models
         public string Description { get; set; } = string.Empty;
 
         [MaxLength(100)]
-        public string Slug { get; set; } = string.Empty; // URL-Friendly name: "Mobile-phones"
+        public string Slug { get; set; } = string.Empty;
 
-        // Navigation Property - One Category has many products.
         public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

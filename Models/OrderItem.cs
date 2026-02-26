@@ -16,8 +16,6 @@ namespace ShopNet.Models
 
         public int Quantity { get; set; }
 
-        // Store price at time of purhase - important!
-        // Product Price can change, but order history should show what was paid
         [Column(TypeName = "decima(18,2)")]
         public decimal UnitPrice { get; set; }
 

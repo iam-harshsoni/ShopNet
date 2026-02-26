@@ -22,7 +22,5 @@ namespace ShopNet.Repository.IRepository
 
         void Remove(T Entity);
         void RemoveRange(IEnumerable<T> entities);
-
-        // Will move update operation to specifice Model Repo as update opertaion has different fields as per model. 
     }
 }

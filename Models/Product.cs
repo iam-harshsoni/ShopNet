@@ -18,7 +18,7 @@ namespace ShopNet.Models
 
         [Required(ErrorMessage = "Price is required")]
         [Range(0.01, 999999.99, ErrorMessage = "Price must be between ₹0.01 and ₹9,99,999.99")]
-        [Column(TypeName = "decimal(18,2)")] // Explicit DB colume type
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
         [Required(ErrorMessage = "Stock quantity is required")]
@@ -33,10 +33,8 @@ namespace ShopNet.Models
         [Display(Name = "Category")]
         public int CategoryId { get; set; }
 
-        // Navigation property - EF Core uses this to JOIN Table
         public Category? Category { get; set; } = null;
 
-        //Computed properties - not stored in DB
         public bool IsInStock => Stock > 0;
         public decimal GetDiscountedPrice(decimal discountPercentage) => Price - (Price * discountPercentage / 100);
     }

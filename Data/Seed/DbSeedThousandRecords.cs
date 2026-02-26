@@ -13,10 +13,8 @@ namespace ShopNet.Data.Seed
         {
             try
             {
-                // Apply any pending migrations automatically on startup
                 await context.Database.MigrateAsync();
 
-                // Only seed if tables are empty
                 if (await context.Categories.AnyAsync()) return;
 
                 logger.LogInformation("Seeding database...");

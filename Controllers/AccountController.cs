@@ -61,7 +61,6 @@ namespace ShopNet.Controllers
                 PhoneNumber = vm.PhoneNumber
             };
 
-         
             var result = await _userManager.CreateAsync(user, vm.Password);
 
             if (result.Succeeded)
@@ -82,7 +81,6 @@ namespace ShopNet.Controllers
 
             return View(vm);
         }
-
 
         [HttpGet]
         [AllowAnonymous]
